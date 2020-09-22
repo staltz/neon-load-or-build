@@ -1,8 +1,23 @@
 {
-  "name": "node-gyp-build",
-  "version": "4.2.3",
-  "description": "Build tool and bindings loader for node-gyp that supports prebuilds",
+  "name": "neon-load-or-build",
+  "version": "1.0.0",
+  "description": "Build tool and bindings loader for Neon that supports prebuilds",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/staltz/neon-load-or-build.git"
+  },
+  "author": "Andre Staltz (staltz.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/staltz/neon-load-or-build/issues"
+  },
+  "homepage": "https://github.com/staltz/neon-load-or-build",
   "main": "index.js",
+  "bin": {
+    "neon-load-or-build": "./bin.js",
+    "neon-load-or-build-optional": "./optional.js",
+    "neon-load-or-build-test": "./build-test.js"
+  },
   "devDependencies": {
     "array-shuffle": "^1.0.1",
     "standard": "^14.0.0",
@@ -10,20 +25,5 @@
   },
   "scripts": {
     "test": "standard && node test"
-  },
-  "bin": {
-    "node-gyp-build": "./bin.js",
-    "node-gyp-build-optional": "./optional.js",
-    "node-gyp-build-test": "./build-test.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/prebuild/node-gyp-build.git"
-  },
-  "author": "Mathias Buus (@mafintosh)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/prebuild/node-gyp-build/issues"
-  },
-  "homepage": "https://github.com/prebuild/node-gyp-build"
+  }
 }
