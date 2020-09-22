@@ -2,10 +2,9 @@
 
 var proc = require('child_process')
 var os = require('os')
-var path = require('path')
 
 if (!buildFromSource()) {
-  proc.exec('node-gyp-build-test', function (err, stdout, stderr) {
+  proc.exec('neon-load-or-build-test', function (err, stdout, stderr) {
     if (err) {
       if (verbose()) console.error(stderr)
       preinstall()
@@ -16,15 +15,7 @@ if (!buildFromSource()) {
 }
 
 function build () {
-  var args = [os.platform() === 'win32' ? 'node-gyp.cmd' : 'node-gyp', 'rebuild']
-
-  try {
-    args = [
-      process.execPath,
-      path.join(require.resolve('node-gyp/package.json'), '..', require('node-gyp/package.json').bin['node-gyp']),
-      'rebuild'
-    ]
-  } catch (_) {}
+  var args = ['neon', 'build', '--release']
 
   proc.spawn(args[0], args.slice(1), { stdio: 'inherit' }).on('exit', function (code) {
     if (code || !process.argv[3]) process.exit(code)
