@@ -6,6 +6,8 @@
 npm install neon-load-or-build
 ```
 
+Heavily inspired on and based on [node-gyp-build](https://github.com/prebuild/node-gyp-build).
+
 ## Usage
 
 `neon-load-or-build` as a the CLI works similar to `neon build` except that it will check if a build or prebuild is present before rebuilding your project.
