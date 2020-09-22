@@ -30,11 +30,8 @@ load.path = function (dir) {
   } catch (err) {}
 
   if (!prebuildsOnly) {
-    var release = getFirst(path.join(dir, 'build/Release'), matchBuild)
-    if (release) return release
-
-    var debug = getFirst(path.join(dir, 'build/Debug'), matchBuild)
-    if (debug) return debug
+    var localBuild = getFirst(path.join(dir, 'native'), matchBuild)
+    if (localBuild) return localBuild
   }
 
   var prebuild = resolve(dir)
@@ -52,7 +49,7 @@ load.path = function (dir) {
     armv ? 'armv=' + armv : '',
     'libc=' + libc,
     'node=' + process.versions.node,
-    process.versions.electron ? 'electron=' + process.versions.electron : '',
+    (process.versions && process.versions.electron) ? 'electron=' + process.versions.electron : '',
     typeof __webpack_require__ === 'function' ? 'webpack=true' : '' // eslint-disable-line
   ].filter(Boolean).join(' ')
 
