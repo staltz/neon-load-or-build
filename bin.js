@@ -6,7 +6,7 @@ var os = require('os')
 if (!buildFromSource()) {
   proc.exec('neon-load-or-build-test', function (err, stdout, stderr) {
     if (err) {
-      if (verbose()) console.error(stderr)
+      console.error(stderr)
       preinstall()
     }
   })
@@ -49,10 +49,6 @@ function exec (cmd) {
 
 function buildFromSource () {
   return hasFlag('--build-from-source') || process.env.npm_config_build_from_source === 'true'
-}
-
-function verbose () {
-  return hasFlag('--verbose') || process.env.npm_config_loglevel === 'verbose'
 }
 
 // TODO (next major): remove in favor of env.npm_config_* which works since npm
