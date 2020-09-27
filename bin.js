@@ -2,6 +2,12 @@
 
 var proc = require('child_process')
 var os = require('os')
+var fs = require('fs')
+var path = require('path')
+
+if (inProjectRepo()) {
+  process.exit(0)
+}
 
 if (!buildFromSource()) {
   proc.exec('neon-load-or-build-test', function (err, stdout, stderr) {
@@ -45,6 +51,11 @@ function exec (cmd) {
     windowsVerbatimArguments: true,
     stdio: 'inherit'
   })
+}
+
+function inProjectRepo () {
+  var gitpath = path.join(process.cwd(), '.git')
+  return fs.existsSync(gitpath)
 }
 
 function buildFromSource () {
