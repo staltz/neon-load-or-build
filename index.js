@@ -18,13 +18,13 @@ var uv = (process.versions.uv || '').split('.')[0]
 module.exports = load
 
 function load (opts) {
-  if (opts.moduleName && platform === 'ios' || platform === 'android') {
-    var dir = path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
-    return runtimeRequire(load.path(dir))
+  var dir
+  if (opts.moduleName && (platform === 'ios' || platform === 'android')) {
+    dir = path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
   } else {
-    var dir = opts.dir || opts
-    return runtimeRequire(load.path(dir))
+    dir = opts.dir || opts
   }
+  return runtimeRequire(load.path(dir))
 }
 
 load.path = function (dir) {
