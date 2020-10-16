@@ -17,12 +17,14 @@ var uv = (process.versions.uv || '').split('.')[0]
 
 module.exports = load
 
-function load (dir) {
-  return runtimeRequire(load.path(dir))
+function load (opts) {
+  return runtimeRequire(load.path(opts))
 }
 
-load.path = function (dir) {
-  dir = path.resolve(dir || '.')
+load.path = function (opts) {
+  var dir = opts.moduleName
+    ? path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
+    : path.resolve(opts.dir || '.')
 
   try {
     var name = runtimeRequire(path.join(dir, 'package.json')).name.toUpperCase().replace(/-/g, '_')
@@ -80,6 +82,79 @@ function getFirst (dir, filter) {
 
 function matchBuild (name) {
   return /\.node$/.test(name)
+}
+
+var exists = ((fs.accessSync && function (path) { try { fs.accessSync(path) } catch (e) { return false } return true }) ||
+  fs.existsSync || path.existsSync)
+
+/**
+ * Gets the filename of the JavaScript file that invokes this function.
+ * Used to help find the root directory of a module.
+ * Optionally accepts an filename argument to skip when searching for the invoking filename
+ */
+function getFileName (callingFile) {
+  var origPST = Error.prepareStackTrace
+  var origSTL = Error.stackTraceLimit
+  var dummy = {}
+  var fileName
+
+  Error.stackTraceLimit = 10
+
+  Error.prepareStackTrace = function (e, st) {
+    for (var i = 0, l = st.length; i < l; i++) {
+      fileName = st[i].getFileName()
+      if (fileName !== __filename) {
+        if (callingFile) {
+          if (fileName !== callingFile) {
+            return
+          }
+        } else {
+          return
+        }
+      }
+    }
+  }
+
+  // run the 'prepareStackTrace' function above
+  Error.captureStackTrace(dummy)
+  dummy.stack // eslint-disable-line
+
+  // cleanup
+  Error.prepareStackTrace = origPST
+  Error.stackTraceLimit = origSTL
+
+  return fileName
+}
+
+/**
+ * Gets the root directory of a module, given an arbitrary filename
+ * somewhere in the module tree. The "root directory" is the directory
+ * containing the `package.json` file.
+ *
+ *   In:  /home/nate/node-native-module/lib/index.js
+ *   Out: /home/nate/node-native-module
+ */
+function getRoot (file) {
+  var dir = path.dirname(file)
+  var prev
+  while (true) {
+    if (dir === '.') {
+      // Avoids an infinite loop in rare cases, like the REPL
+      dir = process.cwd()
+    }
+    if (exists(path.join(dir, 'package.json')) || exists(path.join(dir, 'node_modules'))) {
+      // Found the 'package.json' file or 'node_modules' dir; we're done
+      return dir
+    }
+    if (prev === dir) {
+      // Got to the top
+      throw new Error('Could not find module root given file: "' + file +
+        '". Do you have a `package.json` file? ')
+    }
+    // Try the parent dir next
+    prev = dir
+    dir = path.join(dir, '..')
+  }
 }
 
 function parseTags (file) {
