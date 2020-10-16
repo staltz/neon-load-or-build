@@ -14,10 +14,11 @@ Heavily inspired on and based on [node-gyp-build](https://github.com/prebuild/no
 
 It's main intended use is as an npm install script and bindings loader for native modules that bundle prebuilds (inspired by [`prebuildify`](https://github.com/prebuild/prebuildify)).
 
-First add `neon-load-or-build` as an install script to your native neon-bindings project
+First add `neon-load-or-build` as an install script to your native neon-bindings project (let's assume it's called "my-package"):
 
 ```js
 {
+  "name": "my-package",
   ...
   "scripts": {
     "install": "neon-load-or-build"
@@ -28,16 +29,13 @@ First add `neon-load-or-build` as an install script to your native neon-bindings
 Then in your neon module's `lib/index.js`, instead of using the default `require('../native)`, use `node-load-or-build` to load your binding.
 
 ```js
-module.exports = require('neon-load-or-build')({dir: __dirname + '/..'})
+module.exports = require('neon-load-or-build')({
+  moduleName: 'my-package', // optional but recommended
+  dir: __dirname + '/..',
+})
 ```
 
-Alternatively, you can pass the `moduleName` instead:
-
-```js
-module.exports = require('neon-load-or-build')({moduleName: 'my-package'})
-```
-
-**When targeting nodejs-mobile, you should use `moduleName`**, because it more accurately finds the correct path on both iOS and Android, even if you use `noderify` (or even if you don't).
+**When targeting nodejs-mobile, you must have `moduleName`**, because it more accurately finds the correct path on both iOS and Android, even if you use `noderify` (or even if you don't).
 
 If you do these two things and bundle prebuilds, your Neon module will work for most platforms without having to compile on install time AND will work in both node and electron without the need to recompile between usage.
 

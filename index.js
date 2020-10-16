@@ -18,13 +18,17 @@ var uv = (process.versions.uv || '').split('.')[0]
 module.exports = load
 
 function load (opts) {
-  return runtimeRequire(load.path(opts))
+  if (opts.moduleName && platform === 'ios' || platform === 'android') {
+    var dir = path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
+    return runtimeRequire(load.path(dir))
+  } else {
+    var dir = opts.dir || opts
+    return runtimeRequire(load.path(dir))
+  }
 }
 
-load.path = function (opts) {
-  var dir = opts.moduleName
-    ? path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
-    : path.resolve(opts.dir || '.')
+load.path = function (dir) {
+  dir = path.resolve(dir || '.')
 
   try {
     var name = runtimeRequire(path.join(dir, 'package.json')).name.toUpperCase().replace(/-/g, '_')
