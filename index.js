@@ -22,7 +22,7 @@ function load (opts) {
   if (opts && opts.moduleName && (platform === 'ios' || platform === 'android')) {
     dir = path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
   } else {
-    dir = opts.dir || opts || '.'
+    dir = (opts && opts.dir) || opts || '.'
   }
   return runtimeRequire(load.path(dir))
 }
