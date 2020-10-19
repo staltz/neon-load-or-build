@@ -1,6 +1,6 @@
 {
   "name": "neon-load-or-build",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Build tool and bindings loader for Neon that supports prebuilds",
   "repository": {
     "type": "git",
