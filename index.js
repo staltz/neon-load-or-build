@@ -19,16 +19,16 @@ module.exports = load
 
 function load (opts) {
   var dir
-  if (opts.moduleName && (platform === 'ios' || platform === 'android')) {
+  if (opts && opts.moduleName && (platform === 'ios' || platform === 'android')) {
     dir = path.resolve(getRoot(getFileName()), 'node_modules', opts.moduleName)
   } else {
-    dir = opts.dir || opts
+    dir = opts.dir || opts || '.'
   }
   return runtimeRequire(load.path(dir))
 }
 
 load.path = function (dir) {
-  dir = path.resolve(dir || '.')
+  dir = path.resolve(dir)
 
   try {
     var name = runtimeRequire(path.join(dir, 'package.json')).name.toUpperCase().replace(/-/g, '_')
